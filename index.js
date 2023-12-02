@@ -19,6 +19,32 @@ app.get('/', function (req, res) {
   res.sendFile(__dirname + '/views/index.html');
 });
 
+app.get('/api/whoami',function(req,res){
+  let { rawHeaders } = req;
+  let json = {};
+
+  for(let i = 0; i <= rawHeaders.length; i++) {
+      switch(rawHeaders[i]) {
+          case 'Host':
+              json['ipaddress'] = rawHeaders[i+1];
+              break;
+          case 'Accept-Language':
+              json['language'] = rawHeaders[i+1];
+              break;
+          case 'User-Agent':
+              json['software'] = rawHeaders[i+1];
+              break;
+      }
+  }
+  let sortedObj = {};
+
+  Object.keys(json).sort((a,b) => {
+    return a.localeCompare(b);
+  }).forEach(key => sortedObj[key] = json[key])
+  
+  res.json(sortedObj);
+})
+
 // your first API endpoint...
 app.get('/api/hello', function (req, res) {
   res.json({ greeting: 'hello API' });
